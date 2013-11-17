@@ -49,7 +49,6 @@ var LintTask = Class.extend(Obj, {
         // Private Properties
         //-------------------------------------------------------------------------------
 
-
         /**
          * @private
          * @type {string}
