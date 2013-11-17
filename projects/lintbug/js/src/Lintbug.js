@@ -96,30 +96,33 @@ var Lintbug = Class.extend(Obj, {
         targetPath = BugFs.path(targetPath);
 
         this.getJsFilePaths(targetPath, ignores, function(error, jsFilePaths) {
-
-            $iterableParallel(jsFilePaths, function(flow, jsFilePath) {
-                var lintFile = null;
-                $series([
-                    $task(function(flow) {
-                        _this.generateLintFile(jsFilePath, function(error, _lintFile) {
-                            if (!error) {
-                                lintFile = _lintFile;
-                            }
-                            flow.complete(error);
-                        });
-                    }),
-                    $task(function(flow) {
-                        _this.runLintTasks(lintFile, lintTasks, function(error) {
-                            flow.complete(error);
+            if (!error) {
+                $iterableParallel(jsFilePaths, function(flow, jsFilePath) {
+                    var lintFile = null;
+                    $series([
+                        $task(function(flow) {
+                            _this.generateLintFile(jsFilePath, function(error, _lintFile) {
+                                if (!error) {
+                                    lintFile = _lintFile;
+                                }
+                                flow.complete(error);
+                            });
+                        }),
+                        $task(function(flow) {
+                            _this.runLintTasks(lintFile, lintTasks, function(error) {
+                                flow.complete(error);
+                            })
                         })
-                    })
 
-                    //TODO BRN: Rewrite back to lint files
+                        //TODO BRN: Rewrite back to lint files
 
-                ]).execute(function(error) {
-                    flow.complete(error);
-                });
-            }).execute(callback);
+                    ]).execute(function(error) {
+                        flow.complete(error);
+                    });
+                }).execute(callback);
+            } else {
+                callback(error);
+            }
         });
     },
 
@@ -195,7 +198,7 @@ var Lintbug = Class.extend(Obj, {
      */
     runLintTasks: function(lintFile, lintTaskNames, callback) {
         var _this = this;
-        $forEachSeries(lintTasks, function(flow, lintTaskName) {
+        $forEachSeries(lintTaskNames, function(flow, lintTaskName) {
             var lintTask = _this.getLintTask(lintTaskName);
             lintTask.runTask(lintFile, function(error) {
                 flow.complete(error);
