@@ -37,7 +37,7 @@ var nodejs      = enableModule('nodejs');
 buildProperties({
     packageJson: {
         name: "lintbug",
-        version: "0.0.1",
+        version: "0.0.2",
         main: "./scripts/lintbug-module.js",
         bin: "bin/lintbug",
         dependencies: {
