@@ -31,13 +31,20 @@ var nodejs      = enableModule('nodejs');
 
 
 //-------------------------------------------------------------------------------
+// Values
+//-------------------------------------------------------------------------------
+
+var version         = "0.0.3";
+
+
+//-------------------------------------------------------------------------------
 // Declare Properties
 //-------------------------------------------------------------------------------
 
 buildProperties({
     packageJson: {
         name: "lintbug",
-        version: "0.0.2",
+        version: version,
         main: "./scripts/lintbug-module.js",
         bin: "bin/lintbug",
         dependencies: {
@@ -206,12 +213,13 @@ buildTarget('prod').buildFlow(
                 task.updateProperties({
                     file: packedNodePackage.getFilePath(),
                     options: {
-                        acl: 'public-read'
+                        acl: 'public-read',
+                        encrypt: true
                     }
                 });
             },
             properties: {
-                bucket: "airbug"
+                bucket: "{{prod-deploy-bucket}}"
             }
         })
     ])

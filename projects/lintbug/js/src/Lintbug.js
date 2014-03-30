@@ -82,20 +82,18 @@ var Lintbug = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Path} targetPath
+     * @param {Array.<(Path | string)>} targetPaths
      * @param {Array.<(string | RegExp)>} ignores
      * @param {Array.<string>} lintTasks
      * @param {function(Error)} callback
      */
-    lint: function(targetPath, ignores, lintTasks, callback) {
+    lint: function(targetPaths, ignores, lintTasks, callback) {
         var _this = this;
-        targetPath = BugFs.path(targetPath);
-
-        this.getJsFilePaths(targetPath, ignores, function(error, jsFilePaths) {
+        this.getJsFilePaths(targetPaths, ignores, function(error, jsFilePaths) {
             if (!error) {
                 $iterableParallel(jsFilePaths, function(flow, jsFilePath) {
                     var lintFile = null;
@@ -144,13 +142,13 @@ var Lintbug = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {(string | Path)} targetPath
+     * @param {Array.<(string | Path)>} targetPaths
      * @param {(Array.<(string | RegExp)>)} ignorePatterns
      * @param callback
      */
-    getJsFilePaths: function(targetPath, ignorePatterns, callback) {
+    getJsFilePaths: function(targetPaths, ignorePatterns, callback) {
         var fileFinder = new FileFinder([".*\\.js"], ignorePatterns);
-        fileFinder.scan([targetPath], function(error, sourcePaths) {
+        fileFinder.scan(targetPaths, function(error, sourcePaths) {
             if (!error) {
                 callback(null, sourcePaths);
             } else {
