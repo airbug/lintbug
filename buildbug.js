@@ -48,7 +48,7 @@ buildProperties({
         main: "./scripts/lintbug-module.js",
         bin: "bin/lintbug",
         dependencies: {
-            bugpack: 'https://s3.amazonaws.com/airbug/bugpack-0.0.5.tgz'
+            bugpack: 'https://s3.amazonaws.com/deploy-airbug/bugpack-0.0.5.tgz'
         }
     },
     sourcePaths: [
