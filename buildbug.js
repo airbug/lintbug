@@ -197,97 +197,99 @@ buildTarget('prod').buildFlow(
 
             //Create test node lintbug package
 
+            series([
+                targetTask('createNodePackage', {
+                    properties: {
+                        binPaths: buildProject.getProperty("node.binPaths"),
+                        packageJson: buildProject.getProperty("node.unitTest.packageJson"),
+                        readmePath: buildProject.getProperty("node.readmePath"),
+                        sourcePaths: buildProject.getProperty("node.sourcePaths").concat(
+                            buildProject.getProperty("node.unitTest.sourcePaths")
+                        ),
+                        scriptPaths: buildProject.getProperty("node.scriptPaths").concat(
+                            buildProject.getProperty("node.unitTest.scriptPaths")
+                        ),
+                        testPaths: buildProject.getProperty("node.unitTest.testPaths")
+                    }
+                }),
+                targetTask('generateBugPackRegistry', {
+                    init: function(task, buildProject, properties) {
+                        var nodePackage = nodejs.findNodePackage(
+                            buildProject.getProperty("node.unitTest.packageJson.name"),
+                            buildProject.getProperty("node.unitTest.packageJson.version")
+                        );
+                        task.updateProperties({
+                            sourceRoot: nodePackage.getBuildPath()
+                        });
+                    }
+                }),
+                targetTask('packNodePackage', {
+                    properties: {
+                        packageName: "{{node.unitTest.packageJson.name}}",
+                        packageVersion: "{{node.unitTest.packageJson.version}}"
+                    }
+                }),
+                targetTask('startNodeModuleTests', {
+                    init: function(task, buildProject, properties) {
+                        var packedNodePackage = nodejs.findPackedNodePackage(
+                            buildProject.getProperty("node.unitTest.packageJson.name"),
+                            buildProject.getProperty("node.unitTest.packageJson.version")
+                        );
+                        task.updateProperties({
+                            modulePath: packedNodePackage.getFilePath(),
+                            checkCoverage: true
+                        });
+                    }
+                })
+            ]),
 
-            targetTask('createNodePackage', {
-                properties: {
-                    binPaths: buildProject.getProperty("node.binPaths"),
-                    packageJson: buildProject.getProperty("node.unitTest.packageJson"),
-                    readmePath: buildProject.getProperty("node.readmePath"),
-                    sourcePaths: buildProject.getProperty("node.sourcePaths").concat(
-                        buildProject.getProperty("node.unitTest.sourcePaths")
-                    ),
-                    scriptPaths: buildProject.getProperty("node.scriptPaths").concat(
-                        buildProject.getProperty("node.unitTest.scriptPaths")
-                    ),
-                    testPaths: buildProject.getProperty("node.unitTest.testPaths")
-                }
-            }),
-            targetTask('generateBugPackRegistry', {
-                init: function(task, buildProject, properties) {
-                    var nodePackage = nodejs.findNodePackage(
-                        buildProject.getProperty("node.unitTest.packageJson.name"),
-                        buildProject.getProperty("node.unitTest.packageJson.version")
-                    );
-                    task.updateProperties({
-                        sourceRoot: nodePackage.getBuildPath()
-                    });
-                }
-            }),
-            targetTask('packNodePackage', {
-                properties: {
-                    packageName: "{{node.unitTest.packageJson.name}}",
-                    packageVersion: "{{node.unitTest.packageJson.version}}"
-                }
-            }),
-            targetTask('startNodeModuleTests', {
-                init: function(task, buildProject, properties) {
-                    var packedNodePackage = nodejs.findPackedNodePackage(
-                        buildProject.getProperty("node.unitTest.packageJson.name"),
-                        buildProject.getProperty("node.unitTest.packageJson.version")
-                    );
-                    task.updateProperties({
-                        modulePath: packedNodePackage.getFilePath(),
-                        checkCoverage: true
-                    });
-                }
-            })
-        ]),
 
-        // Create production node lintbug package
+            // Create production node lintbug package
 
-        series([
-            targetTask('createNodePackage', {
-                properties: {
-                    binPaths: buildProject.getProperty("node.binPaths"),
-                    packageJson: buildProject.getProperty("node.packageJson"),
-                    readmePath: buildProject.getProperty("node.readmePath"),
-                    sourcePaths: buildProject.getProperty("node.sourcePaths"),
-                    scriptPaths: buildProject.getProperty("node.scriptPaths")
-                }
-            }),
-            targetTask('generateBugPackRegistry', {
-                init: function(task, buildProject, properties) {
-                    var nodePackage = nodejs.findNodePackage(
-                        buildProject.getProperty("node.packageJson.name"),
-                        buildProject.getProperty("node.packageJson.version")
-                    );
-                    task.updateProperties({
-                        sourceRoot: nodePackage.getBuildPath()
-                    });
-                }
-            }),
-            targetTask('packNodePackage', {
-                properties: {
-                    packageName: "{{node.packageJson.name}}",
-                    packageVersion: "{{node.packageJson.version}}"
-                }
-            }),
-            targetTask("s3PutFile", {
-                init: function(task, buildProject, properties) {
-                    var packedNodePackage = nodejs.findPackedNodePackage(buildProject.getProperty("node.packageJson.name"),
-                        buildProject.getProperty("node.packageJson.version"));
-                    task.updateProperties({
-                        file: packedNodePackage.getFilePath(),
-                        options: {
-                            acl: 'public-read',
-                            encrypt: true
-                        }
-                    });
-                },
-                properties: {
-                    bucket: "{{prod-deploy-bucket}}"
-                }
-            })
+            series([
+                targetTask('createNodePackage', {
+                    properties: {
+                        binPaths: buildProject.getProperty("node.binPaths"),
+                        packageJson: buildProject.getProperty("node.packageJson"),
+                        readmePath: buildProject.getProperty("node.readmePath"),
+                        sourcePaths: buildProject.getProperty("node.sourcePaths"),
+                        scriptPaths: buildProject.getProperty("node.scriptPaths")
+                    }
+                }),
+                targetTask('generateBugPackRegistry', {
+                    init: function(task, buildProject, properties) {
+                        var nodePackage = nodejs.findNodePackage(
+                            buildProject.getProperty("node.packageJson.name"),
+                            buildProject.getProperty("node.packageJson.version")
+                        );
+                        task.updateProperties({
+                            sourceRoot: nodePackage.getBuildPath()
+                        });
+                    }
+                }),
+                targetTask('packNodePackage', {
+                    properties: {
+                        packageName: "{{node.packageJson.name}}",
+                        packageVersion: "{{node.packageJson.version}}"
+                    }
+                }),
+                targetTask("s3PutFile", {
+                    init: function(task, buildProject, properties) {
+                        var packedNodePackage = nodejs.findPackedNodePackage(buildProject.getProperty("node.packageJson.name"),
+                            buildProject.getProperty("node.packageJson.version"));
+                        task.updateProperties({
+                            file: packedNodePackage.getFilePath(),
+                            options: {
+                                acl: 'public-read',
+                                encrypt: true
+                            }
+                        });
+                    },
+                    properties: {
+                        bucket: "{{prod-deploy-bucket}}"
+                    }
+                })
+            ])
         ])
     ])
 );
