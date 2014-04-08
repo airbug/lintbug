@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('lintbug')
-
-//@Export('LintFileBuilder')
+//@Export('lintbug.LintFileBuilder')
 
 //@Require('Class')
 //@Require('List')
@@ -18,19 +16,19 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var List        = bugpack.require('List');
-var Obj         = bugpack.require('Obj');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
-var BugFs       = bugpack.require('bugfs.BugFs');
-var LintFile    = bugpack.require('lintbug.LintFile');
+var Class               = bugpack.require('Class');
+var List                = bugpack.require('List');
+var Obj                 = bugpack.require('Obj');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
+var BugFs               = bugpack.require('bugfs.BugFs');
+var LintFile            = bugpack.require('lintbug.LintFile');
 
 
 //-------------------------------------------------------------------------------
@@ -48,14 +46,18 @@ var $task               = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var LintFileBuilder = Class.extend(Obj, {
-
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {Path} filePath
      */
     _constructor: function(filePath) {
@@ -88,7 +90,7 @@ var LintFileBuilder = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**

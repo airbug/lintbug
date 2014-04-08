@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('lintbug')
-
-//@Export('LintFile')
+//@Export('lintbug.LintFile')
 
 //@Require('Class')
 //@Require('List')
@@ -17,18 +15,18 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var List        = bugpack.require('List');
-var Obj         = bugpack.require('Obj');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
-var BugFs       = bugpack.require('bugfs.BugFs');
+var Class               = bugpack.require('Class');
+var List                = bugpack.require('List');
+var Obj                 = bugpack.require('Obj');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
+var BugFs               = bugpack.require('bugfs.BugFs');
 
 
 //-------------------------------------------------------------------------------
@@ -46,6 +44,10 @@ var $task               = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var LintFile = Class.extend(Obj, {
 
 
@@ -54,6 +56,7 @@ var LintFile = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {Path} filePath
      * @param {string} fileContents
      */

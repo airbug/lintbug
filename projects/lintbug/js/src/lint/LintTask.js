@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('lintbug')
-
-//@Export('LintTask')
+//@Export('lintbug.LintTask')
 
 //@Require('Class')
 //@Require('Obj')
@@ -14,7 +12,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -29,6 +27,10 @@ var Obj         = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var LintTask = Class.extend(Obj, {
 
 
@@ -37,6 +39,7 @@ var LintTask = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {string} taskName
      * @param {string} taskMethod
      */
@@ -83,7 +86,7 @@ var LintTask = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**

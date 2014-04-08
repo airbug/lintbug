@@ -2,11 +2,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('lintbug')
-
-//@Export('Lintbug')
+//@Export('lintbug.Lintbug')
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('List')
 //@Require('Map')
 //@Require('Obj')
@@ -30,6 +29,7 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var Exception           = bugpack.require('Exception');
 var List                = bugpack.require('List');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
@@ -57,13 +57,19 @@ var $task               = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var Lintbug = Class.extend(Obj, {
-
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
         this._super();
@@ -82,6 +88,18 @@ var Lintbug = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Map.<string, LintTask>}
+     */
+    getLintTaskMap: function() {
+        return this.lintTaskMap;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
 
@@ -89,37 +107,37 @@ var Lintbug = Class.extend(Obj, {
      * @param {Array.<(Path | string)>} targetPaths
      * @param {Array.<(string | RegExp)>} ignores
      * @param {Array.<string>} lintTasks
-     * @param {function(Error)} callback
+     * @param {function(Throwable=)} callback
      */
     lint: function(targetPaths, ignores, lintTasks, callback) {
         var _this = this;
-        this.getJsFilePaths(targetPaths, ignores, function(error, jsFilePaths) {
-            if (!error) {
+        this.getJsFilePaths(targetPaths, ignores, function(throwable, jsFilePaths) {
+            if (!throwable) {
                 $iterableParallel(jsFilePaths, function(flow, jsFilePath) {
                     var lintFile = null;
                     $series([
                         $task(function(flow) {
-                            _this.generateLintFile(jsFilePath, function(error, _lintFile) {
-                                if (!error) {
+                            _this.generateLintFile(jsFilePath, function(throwable, _lintFile) {
+                                if (!throwable) {
                                     lintFile = _lintFile;
                                 }
-                                flow.complete(error);
+                                flow.complete(throwable);
                             });
                         }),
                         $task(function(flow) {
-                            _this.runLintTasks(lintFile, lintTasks, function(error) {
-                                flow.complete(error);
+                            _this.runLintTasks(lintFile, lintTasks, function(throwable) {
+                                flow.complete(throwable);
                             })
                         })
 
                         //TODO BRN: Rewrite back to lint files
 
-                    ]).execute(function(error) {
-                        flow.complete(error);
+                    ]).execute(function(throwable) {
+                        flow.complete(throwable);
                     });
                 }).execute(callback);
             } else {
-                callback(error);
+                callback(throwable);
             }
         });
     },
@@ -127,7 +145,7 @@ var Lintbug = Class.extend(Obj, {
     /**
      * @static
      * @param {string} taskName
-     * @param {function(LintFile, function(Error))} taskMethod
+     * @param {function(LintFile, function(Throwable=))} taskMethod
      */
     lintTask: function(taskName, taskMethod) {
         var lintTask = new LintTask(taskName, taskMethod);
@@ -137,22 +155,22 @@ var Lintbug = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Instance Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @private
      * @param {Array.<(string | Path)>} targetPaths
      * @param {(Array.<(string | RegExp)>)} ignorePatterns
-     * @param callback
+     * @param {function(Throwable, Set.<Path>=)} callback
      */
     getJsFilePaths: function(targetPaths, ignorePatterns, callback) {
         var fileFinder = new FileFinder([".*\\.js"], ignorePatterns);
-        fileFinder.scan(targetPaths, function(error, sourcePaths) {
-            if (!error) {
-                callback(null, sourcePaths);
+        fileFinder.scan(targetPaths, function(throwable, sourcePathSet) {
+            if (!throwable) {
+                callback(null, sourcePathSet);
             } else {
-                callback(error);
+                callback(throwable);
             }
         });
     },
@@ -160,7 +178,7 @@ var Lintbug = Class.extend(Obj, {
     /**
      * @private
      * @param {Path} jsFilePath
-     * @param {function(Error, LintFile)} callback
+     * @param {function(Throwable, LintFile=)} callback
      */
     generateLintFile: function(jsFilePath, callback) {
         var lintFileBuilder = new LintFileBuilder(jsFilePath);
@@ -184,7 +202,7 @@ var Lintbug = Class.extend(Obj, {
         if (!this.lintTaskMap.containsKey(lintTask.getTaskName())) {
             this.lintTaskMap.put(lintTask.getTaskName(), lintTask);
         } else {
-            throw new Error("task already registered with the name '" + lintTask.getTaskName() + "'");
+            throw new Exception("LintTaskAlreadyRegistered", {}, "Lint task already registered with the name '" + lintTask.getTaskName() + "'");
         }
     },
 
@@ -192,14 +210,14 @@ var Lintbug = Class.extend(Obj, {
      * @private
      * @param {LintFile} lintFile
      * @param {Array.<string>} lintTaskNames
-     * @param {function(Error)} callback
+     * @param {function(Throwable=)} callback
      */
     runLintTasks: function(lintFile, lintTaskNames, callback) {
         var _this = this;
         $forEachSeries(lintTaskNames, function(flow, lintTaskName) {
             var lintTask = _this.getLintTask(lintTaskName);
-            lintTask.runTask(lintFile, function(error) {
-                flow.complete(error);
+            lintTask.runTask(lintFile, function(throwable) {
+                flow.complete(throwable);
             });
         }).execute(callback);
     }
@@ -207,14 +225,15 @@ var Lintbug = Class.extend(Obj, {
 
 
 //-------------------------------------------------------------------------------
-// Static Variables
+// Static Properties
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
  * @private
  * @type {Lintbug}
  */
-Lintbug.instance = undefined;
+Lintbug.instance = null;
 
 
 //-------------------------------------------------------------------------------
@@ -231,6 +250,11 @@ Lintbug.getInstance = function() {
     }
     return Lintbug.instance;
 };
+
+
+//-------------------------------------------------------------------------------
+// Static Proxy
+//-------------------------------------------------------------------------------
 
 Proxy.proxy(Lintbug, Proxy.method(Lintbug.getInstance), [
     "lint",

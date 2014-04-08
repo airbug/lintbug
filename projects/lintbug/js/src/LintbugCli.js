@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('lintbug')
-
-//@Export('LintbugCli')
+//@Export('lintbug.LintbugCli')
 
 //@Require('Class')
 //@Require('bugcli.BugCli')
@@ -16,51 +14,40 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-var path    = require('path');
+var bugpack         = require('bugpack').context();
+var path            = require('path');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var BugCli      = bugpack.require('bugcli.BugCli');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
-var Lintbug     = bugpack.require('lintbug.Lintbug');
+var Class           = bugpack.require('Class');
+var BugCli          = bugpack.require('bugcli.BugCli');
+var BugFlow         = bugpack.require('bugflow.BugFlow');
+var Lintbug         = bugpack.require('lintbug.Lintbug');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $series =   BugFlow.$series;
-var $task =     BugFlow.$task;
+var $series         = BugFlow.$series;
+var $task           = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {BugCli}
+ */
 var LintbugCli = Class.extend(BugCli, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function() {
-
-        this._super();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-
-    //-------------------------------------------------------------------------------
-    // Bugcli Extended Methods
+    // BugCli Methods
     //-------------------------------------------------------------------------------
 
     /**
