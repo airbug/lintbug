@@ -128,10 +128,12 @@ var Lintbug = Class.extend(Obj, {
                             _this.runLintTasks(lintFile, lintTasks, function(throwable) {
                                 flow.complete(throwable);
                             })
+                        }),
+                        $task(function(flow) {
+                            _this.rewriteLintFile(lintFile, function(throwable) {
+                                flow.complete(throwable);
+                            })
                         })
-
-                        //TODO BRN: Rewrite back to lint files
-
                     ]).execute(function(throwable) {
                         flow.complete(throwable);
                     });
@@ -203,6 +205,19 @@ var Lintbug = Class.extend(Obj, {
             this.lintTaskMap.put(lintTask.getTaskName(), lintTask);
         } else {
             throw new Exception("LintTaskAlreadyRegistered", {}, "Lint task already registered with the name '" + lintTask.getTaskName() + "'");
+        }
+    },
+
+    /**
+     * @private
+     * @param {LintFile} lintFile
+     * @param {function(Throwable=)} callback
+     */
+    rewriteLintFile: function(lintFile, callback) {
+        if (lintFile.hasFileChanged()) {
+            BugFs.writeFile(lintFile.getFilePath(), lintFile.getFileContents(), callback);
+        } else {
+            callback();
         }
     },
 

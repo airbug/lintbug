@@ -74,13 +74,19 @@ var LintFile = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.fileContents   = fileContents;
+        this.fileContents           = fileContents;
 
         /**
          * @private
          * @type {Path}
          */
-        this.filePath       = filePath;
+        this.filePath               = filePath;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.originalFileContents   = fileContents;
     },
 
 
@@ -107,6 +113,25 @@ var LintFile = Class.extend(Obj, {
      */
     getFilePath: function() {
         return this.filePath;
+    },
+
+    /**
+     * @return {string}
+     */
+    getOriginalFileContents: function() {
+        return this.originalFileContents;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Convenience Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    hasFileChanged: function() {
+        return this.fileContents !== this.originalFileContents;
     }
 });
 
