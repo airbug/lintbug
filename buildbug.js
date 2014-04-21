@@ -34,9 +34,9 @@ var nodejs              = enableModule('nodejs');
 // Values
 //-------------------------------------------------------------------------------
 
-var version             = "0.0.5";
+var version             = "0.0.6";
 var dependencies        = {
-    bugpack: "0.1.5"
+    bugpack: "0.1.12"
 };
 
 
