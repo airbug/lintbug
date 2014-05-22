@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -13,69 +23,69 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
 
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var TypeUtil            = bugpack.require('TypeUtil');
-var BugFs               = bugpack.require('bugfs.BugFs');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
-var LintFile            = bugpack.require('lintbug.LintFile');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta             = BugMeta.context();
-var test                = TestAnnotation.test;
-
-
-//-------------------------------------------------------------------------------
-// Declare Tests
-//-------------------------------------------------------------------------------
-
-/**
- *
- */
-var lintFileInstantiationTest = {
-
-    // Setup Test
+    //-------------------------------------------------------------------------------
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    setup: function() {
-        this.testFilePath       = BugFs.path("/abc");
-        this.testFileContents   = "testFileContents";
-        this.testLintFile       = new LintFile(this.testFilePath, this.testFileContents);
-    },
+    var Class               = bugpack.require('Class');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var BugFs               = bugpack.require('bugfs.BugFs');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
+    var LintFile            = bugpack.require('lintbug.LintFile');
 
 
-    // Run Test
+    //-------------------------------------------------------------------------------
+    // Simplify References
     //-------------------------------------------------------------------------------
 
-    test: function(test) {
-        test.assertTrue(Class.doesExtend(this.testLintFile, LintFile),
-            "Assert instance of LintFile");
-        test.assertEqual(this.testLintFile.getFileContents(), this.testFileContents,
-            "Assert .fileContents was set correctly");
-        test.assertEqual(this.testLintFile.getFilePath(), this.testFilePath,
-            "Assert .filePath was set correctly");
-    }
-};
+    var bugmeta             = BugMeta.context();
+    var test                = TestAnnotation.test;
 
 
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Declare Tests
+    //-------------------------------------------------------------------------------
 
-bugmeta.annotate(lintFileInstantiationTest).with(
-    test().name("LintFile - instantiation test")
-);
+    /**
+     *
+     */
+    var lintFileInstantiationTest = {
+
+        // Setup Test
+        //-------------------------------------------------------------------------------
+
+        setup: function() {
+            this.testFilePath       = BugFs.path("/abc");
+            this.testFileContents   = "testFileContents";
+            this.testLintFile       = new LintFile(this.testFilePath, this.testFileContents);
+        },
+
+
+        // Run Test
+        //-------------------------------------------------------------------------------
+
+        test: function(test) {
+            test.assertTrue(Class.doesExtend(this.testLintFile, LintFile),
+                "Assert instance of LintFile");
+            test.assertEqual(this.testLintFile.getFileContents(), this.testFileContents,
+                "Assert .fileContents was set correctly");
+            test.assertEqual(this.testLintFile.getFilePath(), this.testFilePath,
+                "Assert .filePath was set correctly");
+        }
+    };
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(lintFileInstantiationTest).with(
+        test().name("LintFile - instantiation test")
+    );
+});

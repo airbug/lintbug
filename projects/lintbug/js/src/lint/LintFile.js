@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -12,132 +22,134 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
 
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var List                = bugpack.require('List');
-var Obj                 = bugpack.require('Obj');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
-var BugFs               = bugpack.require('bugfs.BugFs');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $forEachParallel    = BugFlow.$forEachParallel;
-var $iterableParallel   = BugFlow.$iterableParallel;
-var $if                 = BugFlow.$if;
-var $series             = BugFlow.$series;
-var $task               = BugFlow.$task;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var LintFile = Class.extend(Obj, {
+    var Class               = bugpack.require('Class');
+    var List                = bugpack.require('List');
+    var Obj                 = bugpack.require('Obj');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var BugFs               = bugpack.require('bugfs.BugFs');
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var $forEachParallel    = BugFlow.$forEachParallel;
+    var $iterableParallel   = BugFlow.$iterableParallel;
+    var $if                 = BugFlow.$if;
+    var $series             = BugFlow.$series;
+    var $task               = BugFlow.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {Path} filePath
-     * @param {string} fileContents
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(filePath, fileContents) {
+    var LintFile = Class.extend(Obj, {
 
-        this._super();
+        _name: "lintbug.LintFile",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
+        /**
+         * @constructs
+         * @param {Path} filePath
+         * @param {string} fileContents
+         */
+        _constructor: function(filePath, fileContents) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.fileContents           = fileContents;
+
+            /**
+             * @private
+             * @type {Path}
+             */
+            this.filePath               = filePath;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.originalFileContents   = fileContents;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.fileContents           = fileContents;
+        getFileContents: function() {
+            return this.fileContents;
+        },
 
         /**
-         * @private
-         * @type {Path}
+         * @param {string} fileContents
          */
-        this.filePath               = filePath;
+        setFileContents: function(fileContents) {
+            this.fileContents = fileContents;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {Path}
          */
-        this.originalFileContents   = fileContents;
-    },
+        getFilePath: function() {
+            return this.filePath;
+        },
+
+        /**
+         * @return {string}
+         */
+        getOriginalFileContents: function() {
+            return this.originalFileContents;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Convenience Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {boolean}
+         */
+        hasFileChanged: function() {
+            return this.fileContents !== this.originalFileContents;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getFileContents: function() {
-        return this.fileContents;
-    },
-
-    /**
-     * @param {string} fileContents
-     */
-    setFileContents: function(fileContents) {
-        this.fileContents = fileContents;
-    },
-
-    /**
-     * @return {Path}
-     */
-    getFilePath: function() {
-        return this.filePath;
-    },
-
-    /**
-     * @return {string}
-     */
-    getOriginalFileContents: function() {
-        return this.originalFileContents;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Convenience Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {boolean}
-     */
-    hasFileChanged: function() {
-        return this.fileContents !== this.originalFileContents;
-    }
+    bugpack.export('lintbug.LintFile', LintFile);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('lintbug.LintFile', LintFile);
