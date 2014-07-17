@@ -46,9 +46,9 @@ var nodejs              = enableModule('nodejs');
 // Values
 //-------------------------------------------------------------------------------
 
-var version             = "0.0.7";
+var version             = "0.0.8";
 var dependencies        = {
-    bugpack: "0.1.12"
+    bugpack: "0.1.14"
 };
 
 
@@ -103,10 +103,8 @@ buildProperties({
             ],
             testPaths: [
                 "../bugcore/projects/bugcore/js/test",
-                "../bugflow/projects/bugflow/js/test",
                 "../bugfs/projects/bugfs/js/test",
                 "../bugjs/projects/bugcli/js/test",
-                "../bugtrace/projects/bugtrace/js/test",
                 "./projects/lintbug/js/test"
             ]
         }
@@ -152,6 +150,11 @@ buildTarget('local').buildFlow(
                 targetPaths: buildProject.getProperty("lint.targetPaths"),
                 ignores: buildProject.getProperty("lint.ignorePatterns"),
                 lintTasks: [
+                    "cleanupExtraSpacingAtEndOfLines",
+                    "ensureNewLineEnding",
+                    "indentEqualSignsForPreClassVars",
+                    "orderBugpackRequires",
+                    "orderRequireAnnotations",
                     "updateCopyright"
                 ]
             }
@@ -232,6 +235,11 @@ buildTarget('prod').buildFlow(
                 targetPaths: buildProject.getProperty("lint.targetPaths"),
                 ignores: buildProject.getProperty("lint.ignorePatterns"),
                 lintTasks: [
+                    "cleanupExtraSpacingAtEndOfLines",
+                    "ensureNewLineEnding",
+                    "indentEqualSignsForPreClassVars",
+                    "orderBugpackRequires",
+                    "orderRequireAnnotations",
                     "updateCopyright"
                 ]
             }

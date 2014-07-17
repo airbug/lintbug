@@ -15,10 +15,7 @@
 //@Export('lintbug.LintFile')
 
 //@Require('Class')
-//@Require('List')
 //@Require('Obj')
-//@Require('bugflow.BugFlow')
-//@Require('bugfs.BugFs')
 
 
 //-------------------------------------------------------------------------------
@@ -31,22 +28,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var List                = bugpack.require('List');
-    var Obj                 = bugpack.require('Obj');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
-    var BugFs               = bugpack.require('bugfs.BugFs');
-
-
-    //-------------------------------------------------------------------------------
-    // Simplify References
-    //-------------------------------------------------------------------------------
-
-    var $forEachParallel    = BugFlow.$forEachParallel;
-    var $iterableParallel   = BugFlow.$iterableParallel;
-    var $if                 = BugFlow.$if;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
+    var Class   = bugpack.require('Class');
+    var Obj     = bugpack.require('Obj');
 
 
     //-------------------------------------------------------------------------------

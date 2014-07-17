@@ -14,14 +14,14 @@
 
 require('bugpack').loadContext(module, function(error, bugpack) {
     if (!error) {
-        bugpack.loadExports(["bugflow.BugFlow", "lintbug.LintbugCli"], function(error) {
+        bugpack.loadExports(["Flows", "lintbug.LintbugCli"], function(error) {
             if (!error) {
 
                 //-------------------------------------------------------------------------------
                 // BugPack
                 //-------------------------------------------------------------------------------
 
-                var BugFlow         = bugpack.require('bugflow.BugFlow');
+                var Flows         = bugpack.require('Flows');
                 var LintbugCli      = bugpack.require('lintbug.LintbugCli');
 
 
@@ -29,8 +29,8 @@ require('bugpack').loadContext(module, function(error, bugpack) {
                 // Simplify References
                 //-------------------------------------------------------------------------------
 
-                var $series         = BugFlow.$series;
-                var $task           = BugFlow.$task;
+                var $series         = Flows.$series;
+                var $task           = Flows.$task;
 
 
                 //-------------------------------------------------------------------------------

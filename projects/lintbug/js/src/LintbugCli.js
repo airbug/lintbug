@@ -15,8 +15,8 @@
 //@Export('lintbug.LintbugCli')
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('bugcli.BugCli')
-//@Require('bugflow.BugFlow')
 //@Require('lintbug.Lintbug')
 
 
@@ -30,25 +30,25 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var path            = require('path');
+    var path        = require('path');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var BugCli          = bugpack.require('bugcli.BugCli');
-    var BugFlow         = bugpack.require('bugflow.BugFlow');
-    var Lintbug         = bugpack.require('lintbug.Lintbug');
+    var Class       = bugpack.require('Class');
+    var Flows       = bugpack.require('Flows');
+    var BugCli      = bugpack.require('bugcli.BugCli');
+    var Lintbug     = bugpack.require('lintbug.Lintbug');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $series         = BugFlow.$series;
-    var $task           = BugFlow.$task;
+    var $series     = Flows.$series;
+    var $task       = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

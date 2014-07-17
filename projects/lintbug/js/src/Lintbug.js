@@ -16,11 +16,11 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('List')
 //@Require('Map')
 //@Require('Obj')
 //@Require('Proxy')
-//@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('bugfs.FileFinder')
 //@Require('lintbug.LintFileBuilder')
@@ -39,11 +39,11 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class               = bugpack.require('Class');
     var Exception           = bugpack.require('Exception');
+    var Flows               = bugpack.require('Flows');
     var List                = bugpack.require('List');
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
     var Proxy               = bugpack.require('Proxy');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
     var BugFs               = bugpack.require('bugfs.BugFs');
     var FileFinder          = bugpack.require('bugfs.FileFinder');
     var LintFileBuilder     = bugpack.require('lintbug.LintFileBuilder');
@@ -54,12 +54,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $forEachParallel    = BugFlow.$forEachParallel;
-    var $forEachSeries      = BugFlow.$forEachSeries;
-    var $iterableParallel   = BugFlow.$iterableParallel;
-    var $if                 = BugFlow.$if;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
+    var $forEachSeries      = Flows.$forEachSeries;
+    var $iterableParallel   = Flows.$iterableParallel;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------
@@ -243,9 +241,13 @@ require('bugpack').context("*", function(bugpack) {
             var _this = this;
             $forEachSeries(lintTaskNames, function(flow, lintTaskName) {
                 var lintTask = _this.getLintTask(lintTaskName);
-                lintTask.runTask(lintFile, function(throwable) {
-                    flow.complete(throwable);
-                });
+                if (lintTask) {
+                    lintTask.runTask(lintFile, function (throwable) {
+                        flow.complete(throwable);
+                    });
+                } else {
+                    flow.error(new Exception("LintTaskNotFound", {}, "Could not find lint task by they name of '" + lintTaskName + "'"));
+                }
             }).execute(callback);
         }
     });
