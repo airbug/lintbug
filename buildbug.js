@@ -46,7 +46,7 @@ var nodejs              = enableModule('nodejs');
 // Values
 //-------------------------------------------------------------------------------
 
-var version             = "0.0.8";
+var version             = "0.1.0";
 var dependencies        = {
     bugpack: "0.1.14"
 };
@@ -64,18 +64,17 @@ buildProperties({
         packageJson: {
             name: "lintbug",
             version: version,
-            main: "./scripts/lintbug-module.js",
+            main: "./scripts/lintbug-node.js",
             bin: "bin/lintbug",
             dependencies: dependencies
         },
         readmePath: "./README.md",
         sourcePaths: [
-            '../bugcore/libraries/bugcore/js/src',
-            '../bugflow/projects/bugflow/js/src',
-            '../bugfs/projects/bugfs/js/src',
-            '../bugjs/projects/bugcli/js/src',
-            '../bugtrace/projects/bugtrace/js/src',
-            './projects/lintbug/js/src'
+            "../bugcli/libraries/bugcli/js/src",
+            "../bugcore/libraries/bugcore/js/src",
+            "../bugfs/libraries/bugfs/js/src",
+            "./libraries/lintbug/js/src",
+            "./projects/lintbug/js/src"
         ],
         scriptPaths: [
             "./projects/lintbug/js/scripts"
@@ -84,28 +83,29 @@ buildProperties({
             packageJson: {
                 name: "lintbug-test",
                 version: version,
-                main: "./scripts/lintbug-module.js",
+                main: "./scripts/lintbug-node.js",
                 dependencies: dependencies,
+                private: true,
                 scripts: {
-                    test: "./scripts/bugunit-run.js"
+                    test: "node ./test/scripts/bugunit-run.js"
                 }
             },
             sourcePaths: [
-                "../buganno/projects/buganno/js/src",
-                "../bugmeta/projects/bugmeta/js/src",
-                "../bugunit/projects/bugdouble/js/src",
-                "../bugunit/projects/bugunit/js/src",
+                "../buganno/libraries/buganno/js/src",
+                "../bugdouble/libraries/bugdouble/js/src",
+                "../bugmeta/libraries/bugmeta/js/src",
+                "../bugunit/libraries/bugunit/js/src",
                 "../bugyarn/libraries/bugyarn/js/src"
             ],
             scriptPaths: [
-                "../buganno/projects/buganno/js/scripts",
-                "../bugunit/projects/bugunit/js/scripts"
+                "../buganno/libraries/buganno/js/scripts",
+                "../bugunit/libraries/bugunit/js/scripts"
             ],
             testPaths: [
+                "../bugcli/libraries/bugcli/js/test",
                 "../bugcore/libraries/bugcore/js/test",
-                "../bugfs/projects/bugfs/js/test",
-                "../bugjs/projects/bugcli/js/test",
-                "./projects/lintbug/js/test"
+                "../bugfs/libraries/bugfs/js/test",
+                "./libraries/lintbug/js/test"
             ]
         }
     },
@@ -165,13 +165,11 @@ buildTarget('local').buildFlow(
                 packagePaths: {
                     ".": [buildProject.getProperty("node.readmePath")],
                     "./bin": buildProject.getProperty("node.binPaths"),
-                    "./lib": buildProject.getProperty("node.sourcePaths").concat(
-                        buildProject.getProperty("node.unitTest.sourcePaths")
-                    ),
-                    "./scripts": buildProject.getProperty("node.scriptPaths").concat(
-                        buildProject.getProperty("node.unitTest.scriptPaths")
-                    ),
-                    "./test": buildProject.getProperty("node.unitTest.testPaths")
+                    "./lib": buildProject.getProperty("node.sourcePaths"),
+                    "./scripts": buildProject.getProperty("node.scriptPaths"),
+                    "./test": buildProject.getProperty("node.unitTest.testPaths"),
+                    "./test/lib": buildProject.getProperty("node.unitTest.sourcePaths"),
+                    "./test/scripts": buildProject.getProperty("node.unitTest.scriptPaths")
                 }
             }
         }),
@@ -255,13 +253,11 @@ buildTarget('prod').buildFlow(
                         packagePaths: {
                             ".": [buildProject.getProperty("node.readmePath")],
                             "./bin": buildProject.getProperty("node.binPaths"),
-                            "./lib": buildProject.getProperty("node.sourcePaths").concat(
-                                buildProject.getProperty("node.unitTest.sourcePaths")
-                            ),
-                            "./scripts": buildProject.getProperty("node.scriptPaths").concat(
-                                buildProject.getProperty("node.unitTest.scriptPaths")
-                            ),
-                            "./test": buildProject.getProperty("node.unitTest.testPaths")
+                            "./lib": buildProject.getProperty("node.sourcePaths"),
+                            "./scripts": buildProject.getProperty("node.scriptPaths"),
+                            "./test": buildProject.getProperty("node.unitTest.testPaths"),
+                            "./test/lib": buildProject.getProperty("node.unitTest.sourcePaths"),
+                            "./test/scripts": buildProject.getProperty("node.unitTest.scriptPaths")
                         }
                     }
                 }),
@@ -341,7 +337,19 @@ buildTarget('prod').buildFlow(
                         });
                     },
                     properties: {
-                        bucket: "{{prod-deploy-bucket}}"
+                        bucket: "{{public-bucket}}"
+                    }
+                }),
+                targetTask('npmConfigSet', {
+                    properties: {
+                        config: buildProject.getProperty("npmConfig")
+                    }
+                }),
+                targetTask('npmAddUser'),
+                targetTask('publishNodePackage', {
+                    properties: {
+                        packageName: "{{node.packageJson.name}}",
+                        packageVersion: "{{node.packageJson.version}}"
                     }
                 })
             ])

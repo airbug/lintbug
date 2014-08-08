@@ -21,7 +21,7 @@ require('bugpack').loadContext(module, function(error, bugpack) {
                 // BugPack
                 //-------------------------------------------------------------------------------
 
-                var Flows         = bugpack.require('Flows');
+                var Flows           = bugpack.require('Flows');
                 var LintbugCli      = bugpack.require('lintbug.LintbugCli');
 
 
