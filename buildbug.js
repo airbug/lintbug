@@ -66,7 +66,21 @@ buildProperties({
             version: version,
             main: "./scripts/lintbug-node.js",
             bin: "bin/lintbug",
-            dependencies: dependencies
+            dependencies: dependencies,
+            author: "Brian Neisler <brian@airbug.com>",
+            repository: {
+                type: "git",
+                url: "https://github.com/airbug/lintbug.git"
+            },
+            bugs: {
+                url: "https://github.com/airbug/lintbug/issues"
+            },
+            licenses: [
+                {
+                    type : "MIT",
+                    url : "https://raw.githubusercontent.com/airbug/lintbug/master/LICENSE"
+                }
+            ]
         },
         readmePath: "./README.md",
         sourcePaths: [
