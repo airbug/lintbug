@@ -1,10 +1,7 @@
 /*
  * Copyright (c) 2014 airbug Inc. All rights reserved.
  *
- * All software, both binary and source contained in this work is the exclusive property
- * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
- * the source code of this software is prohibited. This work is protected under the United
- * States copyright law and other international copyright treaties and conventions.
+ * lintbug may be freely distributed under the MIT license.
  */
 
 
@@ -58,9 +55,6 @@ var dependencies        = {
 
 buildProperties({
     node: {
-        binPaths: [
-            "./projects/lintbug/bin"
-        ],
         packageJson: {
             name: "lintbug",
             version: version,
@@ -82,16 +76,19 @@ buildProperties({
                 }
             ]
         },
+        binPaths: [
+            "./projects/lintbug-node/bin"
+        ],
         readmePath: "./README.md",
         sourcePaths: [
             "../bugcli/libraries/bugcli/js/src",
             "../bugcore/libraries/bugcore/js/src",
             "../bugfs/libraries/bugfs/js/src",
             "./libraries/lintbug/js/src",
-            "./projects/lintbug/js/src"
+            "./projects/lintbug-node/js/src"
         ],
         scriptPaths: [
-            "./projects/lintbug/js/scripts"
+            "./projects/lintbug-node/js/scripts"
         ],
         unitTest: {
             packageJson: {
